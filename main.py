@@ -11,26 +11,30 @@ playerSpeed = config.playerSpeed
 playerPos_x = config.playerPos_x
 playerPos_y = config.playerPos_y
 newPlayerPos_x, newPlayerPos_y = 0, 0
+# Inicializing bullet variables
+bulletPos_x, bulletPos_y = 0, playerPos_y
+newBulletPos_x, newBulletPos_y = 0, config.bulletSpeed
+bulletState = 'ready'
 # Initializing enemy variables
 enemySpeed = config.enemySpeed
 enemyPos_x = config.enemyPos_x
 enemyPos_y = config.enemyPos_y
 newEnemyPos_x, newEnemyPos_y = enemySpeed, 0
 
-def enemyMove(enemy_x, enemy_y, player_x, player_y):
-    if player_x - enemy_x > 0:
-        x = enemySpeed
-    elif player_x - enemy_x < 0:
-        x = -enemySpeed
-    else:
-        x = 0
-    if player_y - enemy_y > 0:
-        y = enemySpeed
-    elif player_y - enemy_y < 0:
-        y = -enemySpeed
-    else:
-        y = 0
-    return x, y
+# def enemyMove(enemy_x, enemy_y, player_x, player_y):
+#     if player_x - enemy_x > 0:
+#         x = enemySpeed
+#     elif player_x - enemy_x < 0:
+#         x = -enemySpeed
+#     else:
+#         x = 0
+#     if player_y - enemy_y > 0:
+#         y = enemySpeed
+#     elif player_y - enemy_y < 0:
+#         y = -enemySpeed
+#     else:
+#         y = 0
+#     return x, y
 
 def player(x,y):
     # screen.blit(Object, Position): draw Object into the screen at Position
@@ -39,11 +43,19 @@ def player(x,y):
 def enemy(x,y):
     screen.blit(config.enemyImg, (x, y))
 
+def shoot(x, y):
+    global bulletState
+    bulletState = 'fire'
+    screen.blit(config.bulletImg, (x+16,y+10))
+
+
 # Game loop
 running = True
 while running:
     # RGB - Red, Green, Blue
     screen.fill((0, 0, 255))
+    # Background
+    screen.blit(config.background, (0,0))
 
     for event in pygame.event.get():
         # Close window event
@@ -52,6 +64,8 @@ while running:
 
         # Player movement events
         if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                shoot(playerPos_x, bulletPos_y)
             if event.key == pygame.K_LEFT:
                 newPlayerPos_x = -playerSpeed
             if event.key == pygame.K_RIGHT:
