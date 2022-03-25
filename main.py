@@ -43,7 +43,9 @@ over_font = pygame.font.Font('freesansbold.ttf', 64)
 
 def game_over_text():
     over_text = over_font.render("GAME OVER", True, (255, 255, 255))
+    over_score = over_font.render("Score: " + str(score_value), True, (0, 255, 0))
     screen.blit(over_text, (200, 250))
+    screen.blit(over_score, (270, 320))
 
 def showScore(x, y):
     score = font.render("Score: " + str(score_value), True, (255,255,255))
@@ -169,7 +171,8 @@ while running:
 
 
     player(playerPos_x,playerPos_y)
-    showScore(text_x,text_y)
     if game_over_flag:
         game_over_text()
+    else:
+        showScore(text_x, text_y)
     pygame.display.update()
