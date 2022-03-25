@@ -1,4 +1,5 @@
 import pygame
+from pygame.locals import *
 
 def initializeGame():
     # Initialize pygame
@@ -11,7 +12,7 @@ def initializeGame():
 
 def initializeScreen():
     # create a screen (width,height)
-    screen = pygame.display.set_mode((800,600))
+    screen = pygame.display.set_mode((800,600), DOUBLEBUF, 16)
     return screen
 
 
