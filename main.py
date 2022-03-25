@@ -35,15 +35,15 @@ newEnemyPos_y = config.enemyPos_y
 
 # Score Text
 score_value = 0
-font = pygame.font.Font('freesansbold.ttf', 32)
+font = pygame.font.Font('freesansbold.ttf', int(0.04 * init.resolution[0]))
 text_x = 10
 text_y = 10
 
 # Game Over
-over_font = pygame.font.Font('freesansbold.ttf', 64)
+over_font = pygame.font.Font('freesansbold.ttf', int(0.08 * init.resolution[0]))
 
 # Speed Text
-speed_font = pygame.font.Font('freesansbold.ttf', 32)
+speed_font = pygame.font.Font('freesansbold.ttf', int(0.04 * init.resolution[0]))
 
 
 def game_over_text():
