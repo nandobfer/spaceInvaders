@@ -5,7 +5,7 @@ def initializeGame():
     pygame.init()
     # Title and Icon
     pygame.display.set_caption("Space Invaders")
-    icon = pygame.image.load('spaceship.png')
+    icon = pygame.image.load('player.png')
     pygame.display.set_icon(icon)
     return True
 
