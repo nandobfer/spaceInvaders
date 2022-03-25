@@ -35,22 +35,22 @@ newEnemyPos_y = config.enemyPos_y
 
 # Score Text
 score_value = 0
-font = pygame.font.Font('freesansbold.ttf', int(0.04 * init.resolution[0]))
+font = pygame.font.Font('walkthemoon.ttf', int(0.04 * init.resolution[0]))
 text_x = 10
 text_y = 10
 
 # Game Over
-over_font = pygame.font.Font('freesansbold.ttf', int(0.08 * init.resolution[0]))
+over_font = pygame.font.Font('walkthemoon.ttf', int(0.08 * init.resolution[0]))
 
 # Speed Text
-speed_font = pygame.font.Font('freesansbold.ttf', int(0.04 * init.resolution[0]))
+speed_font = pygame.font.Font('walkthemoon.ttf', int(0.04 * init.resolution[0]))
 
 
 def game_over_text():
     over_text = over_font.render("GAME OVER", True, (255, 255, 255))
     over_score = over_font.render("Score: " + str(score_value), True, (0, 255, 0))
-    screen.blit(over_text, (0.25 * resolution[0], 0.3125 * resolution[1]))
-    screen.blit(over_score, (0.3375 * resolution[0], 0.4 * resolution[1]))
+    screen.blit(over_text, (0.25 * resolution[0], 0.4 * resolution[1]))
+    screen.blit(over_score, (0.305 * resolution[0], 0.5 * resolution[1]))
 
 
 def showScore(x, y):
