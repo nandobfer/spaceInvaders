@@ -15,10 +15,11 @@ pygame.display.set_icon(icon)
 playerImg = pygame.image.load('player.png')
 playerX = 370
 playerY = 480
+playerPos = (playerX,playerY)
 
 def player():
     # screen.blit(Object, Position): draw Object into the screen at Position
-    screen.blit(playerImg, (playerX,playerY))
+    screen.blit(playerImg, playerPos)
 
 # Game loop
 running = True
