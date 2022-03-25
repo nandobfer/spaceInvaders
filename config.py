@@ -1,3 +1,5 @@
+import pygame, random
+
 # Player starting variables
 playerPos_x = 370
 playerPos_y = 480
@@ -6,6 +8,6 @@ playerSpeed = 0.2
 
 # Enemy starting variables
 enemyPos_x = 370
-enemyPos_y = 80
+enemyPos_y =
 enemyImg = pygame.image.load('enemy.png')
 enemySpeed = 0.15
