@@ -8,7 +8,7 @@ playerPos_y = 480
 playerImg = pygame.image.load('player.png')
 playerSpeed = 0.2
 bulletImg = pygame.image.load('bullet.png')
-bulletSpeed = 5
+bulletSpeed = 1
 
 # Enemy starting variables
 enemyPos_x = random.randint(0, 730)

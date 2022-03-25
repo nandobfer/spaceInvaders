@@ -1,8 +1,8 @@
-import pygame
-import config
+import pygame, config, math
 from init import initializeGame, initializeScreen, initializePlayer
 
 # Calling initializing functions
+score = 0
 initializeGame()
 initializePlayer()
 screen = initializeScreen()
@@ -15,6 +15,7 @@ newPlayerPos_x, newPlayerPos_y = 0, 0
 bulletPos_x, bulletPos_y = 0, playerPos_y
 newBulletPos_x, newBulletPos_y = 0, config.bulletSpeed
 bulletState = 'ready'
+shooting_x = 0
 # Initializing enemy variables
 enemySpeed = config.enemySpeed
 enemyPos_x = config.enemyPos_x
@@ -48,6 +49,17 @@ def shoot(x, y):
     bulletState = 'fire'
     screen.blit(config.bulletImg, (x+16,y+10))
 
+def resetBullet():
+    global bulletState
+    global bulletPos_y
+    bulletState = 'ready'
+    bulletPos_y = 500
+
+def getCollision(enemy_x, enemy_y, bullet_x, bullet_y):
+    distance = math.sqrt(math.pow(enemy_x - bullet_x, 2) + math.pow(enemy_y - bullet_y, 2))
+    if distance < 30:
+        return True
+
 
 # Game loop
 running = True
@@ -64,8 +76,6 @@ while running:
 
         # Player movement events
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                shoot(playerPos_x, bulletPos_y)
             if event.key == pygame.K_LEFT:
                 newPlayerPos_x = -playerSpeed
             if event.key == pygame.K_RIGHT:
@@ -80,6 +90,20 @@ while running:
             if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                 newPlayerPos_y = 0
 
+    # Bullet event
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                if bulletState == 'ready':
+                    shooting_x = playerPos_x
+                    bulletPos_y = playerPos_y
+                    shoot(shooting_x, playerPos_y)
+    if bulletState == 'fire':
+        shoot(shooting_x,bulletPos_y)
+        bulletPos_y -= newBulletPos_y
+        if bulletPos_y <= 0:
+            resetBullet()
+
+
     # Enemy movement events
     # newEnemyPos_x, newEnemyPos_y = enemyMove(enemyPos_x, enemyPos_y, playerPos_x, playerPos_y)
 
@@ -93,7 +117,7 @@ while running:
     if playerPos_x <= 10:
         playerPos_x = 10
     elif playerPos_x >= 730:
-        playerPos_x = 730    
+        playerPos_x = 730
     if enemyPos_x <= 10:
         enemyPos_x = 10
         newEnemyPos_x = -newEnemyPos_x
@@ -102,6 +126,12 @@ while running:
         enemyPos_x = 730
         newEnemyPos_x = -newEnemyPos_x
         enemyPos_y += 40
+
+    # Collision event
+    if getCollision(enemyPos_x, enemyPos_y, shooting_x, bulletPos_y):
+        resetBullet()
+        score += 1
+        print(score)
 
     player(playerPos_x,playerPos_y)
     enemy(enemyPos_x,enemyPos_y)
