@@ -21,7 +21,7 @@ newBulletPos_x, newBulletPos_y = 0, config.bulletSpeed
 bulletState = 'ready'
 shooting_x = 0
 # Initializing enemy variables
-enemySpeed = config.enemySpeed
+enemySpeed = 1
 enemyPos_x = []
 enemyPos_y = []
 newEnemyPos_x = []
@@ -29,7 +29,7 @@ newEnemyPos_y = []
 for i in range(config.enemiesQuantity):
     enemyPos_x.append(config.enemyPos_x[i])
     enemyPos_y.append(config.enemyPos_y[i])
-    newEnemyPos_x.append(enemySpeed)
+    newEnemyPos_x.append(config.enemySpeed)
     newEnemyPos_y.append(0)
 
 # Score
@@ -82,6 +82,7 @@ def getBulletCollision(enemy_x, enemy_y, bullet_x, bullet_y):
     if distance < 30:
         collisionSound = mixer.Sound('explosion.wav')
         collisionSound.play()
+        enemySpeed += 0.1
         return True
 
 
@@ -151,7 +152,7 @@ while running:
         if enemyPos_x[i] <= 5 or enemyPos_x[i] >= 730:
             newEnemyPos_x[i] = -newEnemyPos_x[i]
             enemyPos_y[i] += 40
-        enemyPos_x[i] += newEnemyPos_x[i]
+        enemyPos_x[i] += newEnemyPos_x[i] * enemySpeed
 
         # Enemy Collision event
         if getBulletCollision(enemyPos_x[i], enemyPos_y[i], shooting_x, bulletPos_y):
