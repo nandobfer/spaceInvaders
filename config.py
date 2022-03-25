@@ -1,11 +1,13 @@
 import pygame, random
 
 # Background
+import init
+
 background = pygame.image.load('background.jpg').convert()
 
 # Player starting variables
-playerPos_x = 370
-playerPos_y = 480
+playerPos_x = 0.4625 * init.resolution[0]
+playerPos_y = 0.8 * init.resolution[1]
 playerImg = pygame.image.load('player.png').convert_alpha()
 playerSpeed = 0.4
 bulletImg = pygame.image.load('bullet.png').convert_alpha()

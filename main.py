@@ -1,10 +1,13 @@
 import pygame, math, random
+
+import init
 from init import initializeGame, initializeScreen
 from pygame import mixer
 
 # Calling initializing functions
 initializeGame()
 game_over_flag = False
+resolution = init.resolution
 screen = initializeScreen()
 
 import config
@@ -46,8 +49,8 @@ speed_font = pygame.font.Font('freesansbold.ttf', 32)
 def game_over_text():
     over_text = over_font.render("GAME OVER", True, (255, 255, 255))
     over_score = over_font.render("Score: " + str(score_value), True, (0, 255, 0))
-    screen.blit(over_text, (200, 250))
-    screen.blit(over_score, (270, 320))
+    screen.blit(over_text, (0.25 * resolution[0], 0.3125 * resolution[1]))
+    screen.blit(over_score, (0.3375 * resolution[0], 0.4 * resolution[1]))
 
 
 def showScore(x, y):
@@ -155,7 +158,7 @@ while running:
             break
 
         # Enemy Movement
-        if enemyPos_x[i] <= 5 or enemyPos_x[i] >= 730:
+        if enemyPos_x[i] <= 5 or enemyPos_x[i] >= 0.9125 * resolution[0]:
             newEnemyPos_x[i] = -newEnemyPos_x[i]
             enemyPos_y[i] += 40
         enemyPos_x[i] += newEnemyPos_x[i] * enemySpeed
@@ -164,8 +167,8 @@ while running:
         if getBulletCollision(enemyPos_x[i], enemyPos_y[i], shooting_x, bulletPos_y):
             resetBullet()
             score_value += 1
-            enemyPos_x[i] = random.randint(0, 730)
-            enemyPos_y[i] = random.randint(30, 60)
+            enemyPos_x[i] = random.randint(0, int(0.9125 * resolution[0]))
+            enemyPos_y[i] = random.randint(5, int(0.1 * resolution[1]))
 
         # Update enemy position
         enemy(enemyPos_x[i], enemyPos_y[i], i)
@@ -177,8 +180,8 @@ while running:
     # Setting player boundaries
     if playerPos_x <= 10:
         playerPos_x = 10
-    elif playerPos_x >= 730:
-        playerPos_x = 730
+    elif playerPos_x >= 0.9125 * resolution[0]:
+        playerPos_x = 0.9125 * resolution[0]
 
     player(playerPos_x, playerPos_y)
     if game_over_flag:
@@ -186,5 +189,5 @@ while running:
         mixer.music.stop()
     else:
         showScore(text_x, text_y)
-        showSpeed(650 - text_x, text_y)
+        showSpeed(0.8125 * resolution[0] - text_x, text_y)
     pygame.display.update()

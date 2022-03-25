@@ -1,6 +1,8 @@
 import pygame
 from pygame.locals import *
 
+resolution = (1024,768)
+
 def initializeGame():
     # Initialize pygame
     pygame.init()
@@ -12,7 +14,7 @@ def initializeGame():
 
 def initializeScreen():
     # create a screen (width,height)
-    screen = pygame.display.set_mode((800,600), DOUBLEBUF, 16)
+    screen = pygame.display.set_mode(resolution, DOUBLEBUF, 16)
     return screen
 
 
