@@ -1,20 +1,9 @@
-import pygame, math, random
-
-import init
-from init import initializeGame, initializeScreen
+import pygame, math, random, init
 from pygame import mixer
 
-# Calling initializing functions
-initializeGame()
 game_over_flag = False
-resolution = init.resolution
-screen = initializeScreen()
 
 import config
-
-# Music
-mixer.music.load('background.wav')
-mixer.music.play(-1)
 
 # Initializing player variables
 playerSpeed = config.playerSpeed
@@ -33,49 +22,40 @@ enemyPos_y = config.enemyPos_y
 newEnemyPos_x = config.enemyNewPos_x
 newEnemyPos_y = config.enemyPos_y
 
-# Score Text
+# Score
 score_value = 0
-font = pygame.font.Font('walkthemoon.ttf', int(0.04 * init.resolution[0]))
-text_x = 10
-text_y = 10
-
-# Game Over
-over_font = pygame.font.Font('walkthemoon.ttf', int(0.08 * init.resolution[0]))
-
-# Speed Text
-speed_font = pygame.font.Font('walkthemoon.ttf', int(0.04 * init.resolution[0]))
 
 
 def game_over_text():
-    over_text = over_font.render("GAME OVER", True, (255, 255, 255))
-    over_score = over_font.render("Score: " + str(score_value), True, (0, 255, 0))
-    screen.blit(over_text, (0.25 * resolution[0], 0.4 * resolution[1]))
-    screen.blit(over_score, (0.305 * resolution[0], 0.5 * resolution[1]))
+    game_over_text = config.game_over_font.render("GAME OVER", True, (255, 255, 255))
+    game_over_score = config.game_over_font.render("Score: " + str(score_value), True, (0, 255, 0))
+    init.screen.blit(game_over_text, (0.25 * init.resolution[0], 0.4 * init.resolution[1]))
+    init.screen.blit(game_over_score, (0.305 * init.resolution[0], 0.5 * init.resolution[1]))
 
 
 def showScore(x, y):
-    score = font.render("Score: " + str(score_value), True, (255, 255, 255))
-    screen.blit(score, (x, y))
+    score = config.score_font.render("Score: " + str(score_value), True, (255, 255, 255))
+    init.screen.blit(score, (x, y))
 
 
 def showSpeed(x, y):
-    speedText = speed_font.render("Speed " + str(round(enemySpeed, 1)), True, (255, 255, 255))
-    screen.blit(speedText, (x, y))
+    speedText = config.speed_font.render("Speed " + str(round(enemySpeed, 1)), True, (255, 255, 255))
+    init.screen.blit(speedText, (x, y))
 
 
 def player(x, y):
-    # screen.blit(Object, Position): draw Object into the screen at Position
-    screen.blit(config.playerImg, (x, y))
+    # init.screen.blit(Object, Position): draw Object into the init.screen at Position
+    init.screen.blit(config.playerImg, (x, y))
 
 
 def enemy(x, y, i):
-    screen.blit(config.enemyImg[i], (x, y))
+    init.screen.blit(config.enemyImg[i], (x, y))
 
 
 def shoot(x, y):
     global bulletState
     bulletState = 'fire'
-    screen.blit(config.bulletImg, (x + 16, y + 10))
+    init.screen.blit(config.bulletImg, (x + 16, y + 10))
 
 
 def resetBullet():
@@ -107,9 +87,9 @@ def getPlayerCollision(enemy_x, enemy_y, player_x, player_y):
 running = True
 while running:
     # RGB - Red, Green, Blue
-    screen.fill((0, 0, 255))
+    init.screen.fill((0, 0, 255))
     # Background
-    screen.blit(config.background, (0, 0))
+    init.screen.blit(config.background, (0, 0))
 
     for event in pygame.event.get():
         # Close window event
@@ -158,7 +138,7 @@ while running:
             break
 
         # Enemy Movement
-        if enemyPos_x[i] <= 5 or enemyPos_x[i] >= 0.9125 * resolution[0]:
+        if enemyPos_x[i] <= 5 or enemyPos_x[i] >= 0.9125 * init.resolution[0]:
             newEnemyPos_x[i] = -newEnemyPos_x[i]
             enemyPos_y[i] += 40
         enemyPos_x[i] += newEnemyPos_x[i] * enemySpeed
@@ -167,8 +147,8 @@ while running:
         if getBulletCollision(enemyPos_x[i], enemyPos_y[i], shooting_x, bulletPos_y):
             resetBullet()
             score_value += 1
-            enemyPos_x[i] = random.randint(0, int(0.9125 * resolution[0]))
-            enemyPos_y[i] = random.randint(5, int(0.1 * resolution[1]))
+            enemyPos_x[i] = random.randint(0, int(0.9125 * init.resolution[0]))
+            enemyPos_y[i] = random.randint(5, int(0.1 * init.resolution[1]))
 
         # Update enemy position
         enemy(enemyPos_x[i], enemyPos_y[i], i)
@@ -180,14 +160,14 @@ while running:
     # Setting player boundaries
     if playerPos_x <= 10:
         playerPos_x = 10
-    elif playerPos_x >= 0.9125 * resolution[0]:
-        playerPos_x = 0.9125 * resolution[0]
+    elif playerPos_x >= 0.9125 * init.resolution[0]:
+        playerPos_x = 0.9125 * init.resolution[0]
 
     player(playerPos_x, playerPos_y)
     if game_over_flag:
         game_over_text()
         mixer.music.stop()
     else:
-        showScore(text_x, text_y)
-        showSpeed(0.8125 * resolution[0] - text_x, text_y)
+        showScore(config.score_x, config.score_y)
+        showSpeed(0.8125 * init.resolution[0] - config.score_x, config.score_y)
     pygame.display.update()

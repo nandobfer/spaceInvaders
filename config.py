@@ -10,7 +10,7 @@ background = pygame.transform.scale(background, init.resolution)
 playerPos_x = 0.4625 * init.resolution[0]
 playerPos_y = 0.8 * init.resolution[1]
 playerImg = pygame.image.load('player.png').convert_alpha()
-if init.resolution < (800,600):
+if init.resolution < (800, 600):
     playerImg = pygame.transform.scale(playerImg, (0.08 * init.resolution[0], 0.1067 * init.resolution[1]))
 playerSpeed = 0.4
 bulletImg = pygame.image.load('bullet.png').convert_alpha()
@@ -32,3 +32,14 @@ for i in range(enemiesQuantity):
     enemyPos_y.append(random.randint(10, 90))
     enemyNewPos_x.append(enemySpeed)
     enemyNewPos_y.append(0)
+
+# Score
+score_x = 10
+score_y = 10
+score_font = pygame.font.Font('walkthemoon.ttf', int(0.04 * init.resolution[0]))
+
+# Game Over
+game_over_font = pygame.font.Font('walkthemoon.ttf', int(0.08 * init.resolution[0]))
+
+# Speed Text
+speed_font = pygame.font.Font('walkthemoon.ttf', int(0.04 * init.resolution[0]))
