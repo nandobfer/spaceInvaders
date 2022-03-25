@@ -184,22 +184,21 @@ def main():
             # Close window event
             if event.type == pygame.QUIT:
                 running = False
-                pygame.quit()
 
             # Player movement events
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     newPlayerPos_x = -playerSpeed
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     newPlayerPos_x = playerSpeed
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
                     newPlayerPos_y = -playerSpeed
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     newPlayerPos_y = playerSpeed
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame.K_a or event.key == pygame.K_d:
                     newPlayerPos_x = 0
-                if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                if event.key == pygame.K_UP or event.key == pygame.K_DOWN or event.key == pygame.K_w or event.key == pygame.K_s:
                     newPlayerPos_y = 0
 
             # Mouse events
