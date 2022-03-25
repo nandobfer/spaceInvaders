@@ -1,10 +1,9 @@
-import pygame, math, random, init
+import pygame, math, random, init, sys
 from pygame import mixer
-
-game_over_flag = False
-
 import config
 
+game_over_flag = False
+pause = False
 # Initializing player variables
 playerSpeed = config.playerSpeed
 playerPos_x = config.playerPos_x
@@ -17,10 +16,10 @@ bulletState = 'ready'
 
 # Initializing enemy variables
 enemySpeed = 1
-enemyPos_x = config.enemyPos_x
-enemyPos_y = config.enemyPos_y
-newEnemyPos_x = config.enemyNewPos_x
-newEnemyPos_y = config.enemyPos_y
+enemyPos_x = config.enemyPos_x[:]
+enemyPos_y = config.enemyPos_y[:]
+newEnemyPos_x = config.enemyNewPos_x[:]
+newEnemyPos_y = config.enemyPos_y[:]
 
 # Score
 score_value = 0
@@ -34,12 +33,12 @@ def game_over_text():
 
 
 def showScore(x, y):
-    score = config.score_font.render("Score: " + str(score_value), True, (255, 255, 255))
+    score = config.text.render("Score: " + str(score_value), True, (255, 255, 255))
     init.screen.blit(score, (x, y))
 
 
 def showSpeed(x, y):
-    speedText = config.speed_font.render("Speed " + str(round(enemySpeed, 1)), True, (255, 255, 255))
+    speedText = config.text.render("Speed " + str(round(enemySpeed, 1)), True, (255, 255, 255))
     init.screen.blit(speedText, (x, y))
 
 
@@ -55,7 +54,7 @@ def enemy(x, y, i):
 def shoot(x, y):
     global bulletState
     bulletState = 'fire'
-    init.screen.blit(config.bulletImg, (x + 16, y + 10))
+    init.screen.blit(config.bulletImg, (x + 24, y + 10))
 
 
 def resetBullet():
@@ -68,7 +67,7 @@ def resetBullet():
 def getBulletCollision(enemy_x, enemy_y, bullet_x, bullet_y):
     global enemySpeed
     distance = math.sqrt(math.pow(enemy_x - bullet_x, 2) + math.pow(enemy_y - bullet_y, 2))
-    if distance < 30:
+    if distance < config.enemyHitbox:
         collisionSound = mixer.Sound('explosion.wav')
         collisionSound.play()
         enemySpeed += 0.1
@@ -77,97 +76,209 @@ def getBulletCollision(enemy_x, enemy_y, bullet_x, bullet_y):
 
 def getPlayerCollision(enemy_x, enemy_y, player_x, player_y):
     distance = math.sqrt(math.pow(enemy_x - player_x, 2) + math.pow(enemy_y - player_y, 2))
-    if distance < 30:
+    if distance < config.playerHitbox:
         collisionSound = mixer.Sound('explosion.wav')
         collisionSound.play()
         return True
 
 
-# Game loop
-running = True
-while running:
-    # RGB - Red, Green, Blue
-    init.screen.fill((0, 0, 255))
-    # Background
-    init.screen.blit(config.background, (0, 0))
+# PAUSE MENU
+def paused():
+    pauseText = config.largeText.render(("Paused"), True, (255, 255, 255))
+    init.screen.blit(pauseText, (0.35 * init.resolution[0], 0.4 * init.resolution[1]))
+    mixer.music.pause()
+    menu()
 
-    for event in pygame.event.get():
-        # Close window event
-        if event.type == pygame.QUIT:
-            running = False
 
-        # Player movement events
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                newPlayerPos_x = -playerSpeed
-            if event.key == pygame.K_RIGHT:
-                newPlayerPos_x = playerSpeed
-            if event.key == pygame.K_UP:
-                newPlayerPos_y = -playerSpeed
-            if event.key == pygame.K_DOWN:
-                newPlayerPos_y = playerSpeed
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                newPlayerPos_x = 0
-            if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                newPlayerPos_y = 0
+def menu():
+    global pause
+    pause = True
+    while pause:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
 
-        # Bullet event
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                if bulletState == 'ready':
-                    shooting_x = playerPos_x
-                    bulletPos_y = playerPos_y
-                    shoot(shooting_x, playerPos_y)
-                    bulletSound = mixer.Sound('laser.wav')
-                    bulletSound.play()
-    if bulletState == 'fire':
-        shoot(shooting_x, bulletPos_y)
-        bulletPos_y -= newBulletPos_y
-        if bulletPos_y <= 0:
-            resetBullet()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # Unpause Button
+                if config.unpause_x <= mouse[0] <= config.unpause_x + 200 and config.unpause_y <= mouse[
+                    1] <= config.unpause_y + 40:
+                    pause = False
+                    mixer.music.unpause()
+                # Restart Button
+                if config.restart_x <= mouse[0] <= config.restart_x + 200 and config.restart_y <= mouse[
+                    1] <= config.restart_y + 40:
+                    restart()
+                    mixer.music.unpause()
+                # Quit Button
+                if config.quit_x <= mouse[0] <= config.quit_x + 200 and config.quit_y <= mouse[1] <= config.quit_y + 40:
+                    pygame.quit()
 
-    # Enemy events
-    for i in range(config.enemiesQuantity):
+        mouse = pygame.mouse.get_pos()
 
-        # Game Over
-        if getPlayerCollision(enemyPos_x[i], enemyPos_y[i], playerPos_x, playerPos_y):
-            for j in range(config.enemiesQuantity):
-                enemyPos_y[j] = 2000
-            game_over_flag = True
-            break
+        # Unpause Button Rect
+        if config.unpause_x <= mouse[0] <= config.unpause_x + 200 and config.unpause_y <= mouse[
+            1] <= config.unpause_y + 40:
+            pygame.draw.rect(init.screen, (170, 170, 170), [config.unpause_x, config.unpause_y, 200, 40])
+        else:
+            pygame.draw.rect(init.screen, (100, 100, 100), [config.unpause_x, config.unpause_y, 200, 40])
+        init.screen.blit(config.buttonUnpause, (config.unpause_x + 15, config.unpause_y))
 
-        # Enemy Movement
-        if enemyPos_x[i] <= 5 or enemyPos_x[i] >= 0.9125 * init.resolution[0]:
-            newEnemyPos_x[i] = -newEnemyPos_x[i]
-            enemyPos_y[i] += 40
-        enemyPos_x[i] += newEnemyPos_x[i] * enemySpeed
+        # Restart Button Rect
+        if config.restart_x <= mouse[0] <= config.restart_x + 200 and config.restart_y <= mouse[
+            1] <= config.restart_y + 40:
+            pygame.draw.rect(init.screen, (170, 170, 170), [config.restart_x, config.restart_y, 200, 40])
+        else:
+            pygame.draw.rect(init.screen, (100, 100, 100), [config.restart_x, config.restart_y, 200, 40])
+        init.screen.blit(config.buttonRestart, (config.restart_x + 15, config.restart_y))
 
-        # Enemy Collision event
-        if getBulletCollision(enemyPos_x[i], enemyPos_y[i], shooting_x, bulletPos_y):
-            resetBullet()
-            score_value += 1
-            enemyPos_x[i] = random.randint(0, int(0.9125 * init.resolution[0]))
-            enemyPos_y[i] = random.randint(5, int(0.1 * init.resolution[1]))
+        # Quit Button Rect
+        if config.quit_x <= mouse[0] <= config.quit_x + 200 and config.quit_y <= mouse[
+            1] <= config.quit_y + 40:
+            pygame.draw.rect(init.screen, (170, 170, 170), [config.quit_x, config.quit_y, 200, 40])
+        else:
+            pygame.draw.rect(init.screen, (100, 100, 100), [config.quit_x, config.quit_y, 200, 40])
+        init.screen.blit(config.buttonQuit, (config.quit_x + 55, config.quit_y))
 
-        # Update enemy position
-        enemy(enemyPos_x[i], enemyPos_y[i], i)
+        pygame.display.update()
 
-    # Update player position
-    playerPos_x += newPlayerPos_x
-    playerPos_y += newPlayerPos_y
 
-    # Setting player boundaries
-    if playerPos_x <= 10:
-        playerPos_x = 10
-    elif playerPos_x >= 0.9125 * init.resolution[0]:
-        playerPos_x = 0.9125 * init.resolution[0]
+def restart():
+    global game_over_flag, playerSpeed, playerPos_x, playerPos_y, newPlayerPos_x, newPlayerPos_y, shooting_x, bulletPos_x, bulletPos_y, newBulletPos_x, newBulletPos_y, bulletState, score_value
+    global pause, enemySpeed, enemyPos_x, enemyPos_y, newEnemyPos_x, newEnemyPos_y
+    init.initializeGame()
+    init.screen = init.initializeScreen()
+    mixer.music.load('background.wav')
+    mixer.music.play(-1)
+    game_over_flag = False
+    pause = False
+    playerSpeed = config.playerSpeed
+    playerPos_x = config.playerPos_x
+    playerPos_y = config.playerPos_y
+    newPlayerPos_x, newPlayerPos_y = 0, 0
+    shooting_x, bulletPos_x, bulletPos_y, newBulletPos_x, newBulletPos_y = 0, 0, 0, 0, config.bulletSpeed
+    bulletState = 'ready'
+    enemySpeed = 1
+    enemyPos_x = config.enemyPos_x[:]
+    enemyPos_y = config.enemyPos_y[:]
+    newEnemyPos_x = config.enemyNewPos_x[:]
+    newEnemyPos_y = config.enemyPos_y[:]
+    score_value = 0
+    main()
 
-    player(playerPos_x, playerPos_y)
-    if game_over_flag:
-        game_over_text()
-        mixer.music.stop()
-    else:
-        showScore(config.score_x, config.score_y)
-        showSpeed(0.8125 * init.resolution[0] - config.score_x, config.score_y)
-    pygame.display.update()
+
+def main():
+    global game_over_flag, playerSpeed, playerPos_x, playerPos_y, newPlayerPos_x, newPlayerPos_y, shooting_x, bulletPos_x, bulletPos_y, newBulletPos_x, newBulletPos_y, bulletState, score_value
+    # Game loop
+    running = True
+    while running:
+        # RGB - Red, Green, Blue
+        init.screen.fill((0, 0, 255))
+        # Background
+        init.screen.blit(config.background, (0, 0))
+
+        for event in pygame.event.get():
+            # Close window event
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+
+            # Player movement events
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    newPlayerPos_x = -playerSpeed
+                if event.key == pygame.K_RIGHT:
+                    newPlayerPos_x = playerSpeed
+                if event.key == pygame.K_UP:
+                    newPlayerPos_y = -playerSpeed
+                if event.key == pygame.K_DOWN:
+                    newPlayerPos_y = playerSpeed
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                    newPlayerPos_x = 0
+                if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                    newPlayerPos_y = 0
+
+            # Mouse events
+            # PAUSE
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if config.pause_x <= mouse[0] <= config.pause_x + 140 and config.pause_y <= mouse[
+                    1] <= config.pause_y + 40:
+                    paused()
+
+            # Bullet event
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    if bulletState == 'ready':
+                        shooting_x = playerPos_x
+                        bulletPos_y = playerPos_y
+                        shoot(shooting_x, playerPos_y)
+                        bulletSound = mixer.Sound('laser.wav')
+                        bulletSound.play()
+        if bulletState == 'fire':
+            shoot(shooting_x, bulletPos_y)
+            bulletPos_y -= newBulletPos_y
+            if bulletPos_y <= 0:
+                resetBullet()
+
+        # Enemy events
+        for i in range(config.enemiesQuantity):
+
+            # Game Over
+            if getPlayerCollision(enemyPos_x[i], enemyPos_y[i], playerPos_x, playerPos_y):
+                for j in range(config.enemiesQuantity):
+                    enemyPos_y[j] = 2000
+                game_over_flag = True
+                break
+
+            # Enemy Movement
+            if enemyPos_x[i] <= 5 or enemyPos_x[i] >= 0.9125 * init.resolution[0]:
+                newEnemyPos_x[i] = -newEnemyPos_x[i]
+                enemyPos_y[i] += 40
+            enemyPos_x[i] += newEnemyPos_x[i] * enemySpeed
+
+            # Enemy Collision event
+            if getBulletCollision(enemyPos_x[i], enemyPos_y[i], shooting_x, bulletPos_y):
+                resetBullet()
+                score_value += 1
+                enemyPos_x[i] = random.randint(0, int(0.9125 * init.resolution[0]))
+                enemyPos_y[i] = random.randint(5, int(0.1 * init.resolution[1]))
+
+            # Update enemy position
+            enemy(enemyPos_x[i], enemyPos_y[i], i)
+
+        # Update player position
+        playerPos_x += newPlayerPos_x
+        playerPos_y += newPlayerPos_y
+
+        # Setting player boundaries
+        if playerPos_x <= 10:
+            playerPos_x = 10
+        if playerPos_x >= 0.93 * init.resolution[0]:
+            playerPos_x = 0.93 * init.resolution[0]
+        if playerPos_y <= 10:
+            playerPos_y = 10
+        if playerPos_y >= 0.9125 * init.resolution[1]:
+            playerPos_y = 0.9125 * init.resolution[1]
+
+        player(playerPos_x, playerPos_y)
+        if game_over_flag:
+            game_over_text()
+            mixer.music.stop()
+            menu()
+        else:
+            showScore(config.score_x, config.score_y)
+            showSpeed(0.8125 * init.resolution[0] - config.score_x, config.score_y)
+
+        # Buttons
+        #
+        mouse = pygame.mouse.get_pos()
+        if config.pause_x <= mouse[0] <= config.pause_x + 140 and config.pause_y <= mouse[1] <= config.pause_y + 40:
+            pygame.draw.rect(init.screen, (170, 170, 170), [config.pause_x, config.pause_y, 140, 40])
+        else:
+            pygame.draw.rect(init.screen, (100, 100, 100), [config.pause_x, config.pause_y, 140, 40])
+        init.screen.blit(config.buttonPause, (config.pause_x + 12.5, config.pause_y))
+
+        pygame.display.update()
+
+
+main()

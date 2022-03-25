@@ -1,8 +1,6 @@
-import pygame, random
+import pygame, random, init
 
 # Background
-import init
-
 background = pygame.image.load('background.jpg').convert()
 background = pygame.transform.scale(background, init.resolution)
 
@@ -13,12 +11,14 @@ playerImg = pygame.image.load('player.png').convert_alpha()
 if init.resolution < (800, 600):
     playerImg = pygame.transform.scale(playerImg, (0.08 * init.resolution[0], 0.1067 * init.resolution[1]))
 playerSpeed = 0.4
+playerHitbox = 50
 bulletImg = pygame.image.load('bullet.png').convert_alpha()
 bulletSpeed = 1
 
 # Enemy starting variables
 enemiesQuantity = 10
 enemySpeed = 0.15
+enemyHitbox = 30
 enemyPos_x = []
 enemyPos_y = []
 enemyNewPos_x = []
@@ -33,13 +33,27 @@ for i in range(enemiesQuantity):
     enemyNewPos_x.append(enemySpeed)
     enemyNewPos_y.append(0)
 
+# General Text
+text = pygame.font.Font('walkthemoon.ttf', int(0.04 * init.resolution[0]))
+largeText = pygame.font.Font('walkthemoon.ttf', int(0.08 * init.resolution[0]))
+
 # Score
 score_x = 10
 score_y = 10
-score_font = pygame.font.Font('walkthemoon.ttf', int(0.04 * init.resolution[0]))
 
 # Game Over
 game_over_font = pygame.font.Font('walkthemoon.ttf', int(0.08 * init.resolution[0]))
 
-# Speed Text
-speed_font = pygame.font.Font('walkthemoon.ttf', int(0.04 * init.resolution[0]))
+# Buttons
+pause_x = 40 + 0.38 * init.resolution[0]
+pause_y = 10
+unpause_x = 0.4 * init.resolution[0]
+unpause_y = 10 + init.screen.get_height() * 3 / 5
+restart_x = 0.4 * init.resolution[0]
+restart_y = 10 + init.screen.get_height() * 3.5 / 5
+quit_x = 0.4 * init.resolution[0]
+quit_y = 10 + init.screen.get_height() * 4 / 5
+buttonQuit = text.render("Quit", True, (255, 255, 255))
+buttonPause = text.render("Pause", True, (255, 255, 255))
+buttonUnpause = text.render("Unpause", True, (255, 255, 255))
+buttonRestart = text.render("Restart", True, (255, 255, 255))
