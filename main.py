@@ -270,7 +270,6 @@ def main():
             showSpeed(0.8125 * init.resolution[0] - config.score_x, config.score_y)
 
         # Buttons
-        #
         mouse = pygame.mouse.get_pos()
         if config.pause_x <= mouse[0] <= config.pause_x + 140 and config.pause_y <= mouse[1] <= config.pause_y + 40:
             pygame.draw.rect(init.screen, (170, 170, 170), [config.pause_x, config.pause_y, 140, 40])
