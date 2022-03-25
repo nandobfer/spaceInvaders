@@ -1,4 +1,4 @@
-import pygame, config, math, random
+import pygame, math, random
 from init import initializeGame, initializeScreen
 from pygame import mixer
 
@@ -6,6 +6,8 @@ from pygame import mixer
 initializeGame()
 game_over_flag = False
 screen = initializeScreen()
+
+import config
 
 # Music
 mixer.music.load('background.wav')

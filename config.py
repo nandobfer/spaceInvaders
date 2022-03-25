@@ -1,14 +1,14 @@
 import pygame, random
 
 # Background
-background = pygame.image.load('background.jpg')
+background = pygame.image.load('background.jpg').convert()
 
 # Player starting variables
 playerPos_x = 370
 playerPos_y = 480
-playerImg = pygame.image.load('player.png')
+playerImg = pygame.image.load('player.png').convert_alpha()
 playerSpeed = 0.4
-bulletImg = pygame.image.load('bullet.png')
+bulletImg = pygame.image.load('bullet.png').convert_alpha()
 bulletSpeed = 1
 
 # Enemy starting variables
@@ -20,7 +20,7 @@ enemyNewPos_x = []
 enemyNewPos_y = []
 enemyImg = []
 for i in range(enemiesQuantity):
-    enemyImg.append(pygame.image.load('enemy.png'))
+    enemyImg.append(pygame.image.load('enemy.png').convert_alpha())
     enemyPos_x.append(random.randint(40, 660))
     enemyPos_y.append(random.randint(10, 90))
     enemyNewPos_x.append(enemySpeed)
