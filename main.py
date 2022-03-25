@@ -1,11 +1,15 @@
 import pygame, config, math, random
 from init import initializeGame, initializeScreen, initializePlayer
+from pygame import mixer
 
 # Calling initializing functions
-score = 0
 initializeGame()
+game_over_flag = False
 initializePlayer()
 screen = initializeScreen()
+# Background sound
+mixer.music.load('background.wav')
+mixer.music.play(-1)
 # Initializing player variables
 playerSpeed = config.playerSpeed
 playerPos_x = config.playerPos_x
@@ -28,6 +32,23 @@ for i in range(config.enemiesQuantity):
     newEnemyPos_x.append(enemySpeed)
     newEnemyPos_y.append(0)
 
+# Score
+score_value = 0
+font = pygame.font.Font('freesansbold.ttf', 32)
+text_x = 10
+text_y = 10
+
+# Game Over
+over_font = pygame.font.Font('freesansbold.ttf', 64)
+
+def game_over_text():
+    over_text = over_font.render("GAME OVER", True, (255, 255, 255))
+    screen.blit(over_text, (200, 250))
+
+def showScore(x, y):
+    score = font.render("Score: " + str(score_value), True, (255,255,255))
+    screen.blit(score, (x, y))
+
 def player(x,y):
     # screen.blit(Object, Position): draw Object into the screen at Position
     screen.blit(config.playerImg, (x,y))
@@ -46,9 +67,18 @@ def resetBullet():
     bulletState = 'ready'
     bulletPos_y = 500
 
-def getCollision(enemy_x, enemy_y, bullet_x, bullet_y):
+def getBulletCollision(enemy_x, enemy_y, bullet_x, bullet_y):
     distance = math.sqrt(math.pow(enemy_x - bullet_x, 2) + math.pow(enemy_y - bullet_y, 2))
     if distance < 30:
+        collisionSound = mixer.Sound('explosion.wav')
+        collisionSound.play()
+        return True
+
+def getPlayerCollision(enemy_x, enemy_y, player_x, player_y):
+    distance = math.sqrt(math.pow(enemy_x - player_x, 2) + math.pow(enemy_y - player_y, 2))
+    if distance < 30:
+        collisionSound = mixer.Sound('explosion.wav')
+        collisionSound.play()
         return True
 
 
@@ -88,6 +118,8 @@ while running:
                     shooting_x = playerPos_x
                     bulletPos_y = playerPos_y
                     shoot(shooting_x, playerPos_y)
+                    bulletSound = mixer.Sound('laser.wav')
+                    bulletSound.play()
     if bulletState == 'fire':
         shoot(shooting_x,bulletPos_y)
         bulletPos_y -= newBulletPos_y
@@ -95,8 +127,17 @@ while running:
             resetBullet()
 
 
-    # Enemy movement events
+    # Enemy events
     for i in range(config.enemiesQuantity):
+
+        # Game Over
+        if getPlayerCollision(enemyPos_x[i], enemyPos_y[i], playerPos_x, playerPos_y):
+            for j in range(config.enemiesQuantity):
+                enemyPos_y[j] = 2000
+            game_over_flag = True
+            break
+
+        # Movement
         enemyPos_x[i] += newEnemyPos_x[i]
         if enemyPos_x[i] <= 10:
             newEnemyPos_x[i] = -newEnemyPos_x[i]
@@ -106,16 +147,16 @@ while running:
             enemyPos_y[i] += 40
 
         # Collision event
-        if getCollision(enemyPos_x[i], enemyPos_y[i], shooting_x, bulletPos_y):
+        if getBulletCollision(enemyPos_x[i], enemyPos_y[i], shooting_x, bulletPos_y):
             resetBullet()
-            score += 1
-            print(score)
+            score_value += 1
             enemyPos_x[i] = random.randint(0, 730)
             enemyPos_y[i] = random.randint(30, 60)
 
+        # Update enemy position
         enemy(enemyPos_x[i], enemyPos_y[i], i)
 
-    # Setting new position
+    # Update player position
     playerPos_x += newPlayerPos_x
     playerPos_y += newPlayerPos_y
 
@@ -128,4 +169,7 @@ while running:
 
 
     player(playerPos_x,playerPos_y)
+    showScore(text_x,text_y)
+    if game_over_flag:
+        game_over_text()
     pygame.display.update()
