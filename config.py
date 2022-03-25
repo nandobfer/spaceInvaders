@@ -7,7 +7,7 @@ background = pygame.image.load('background.jpg')
 playerPos_x = 370
 playerPos_y = 480
 playerImg = pygame.image.load('player.png')
-playerSpeed = 0.2
+playerSpeed = 0.4
 bulletImg = pygame.image.load('bullet.png')
 bulletSpeed = 1
 
@@ -19,5 +19,5 @@ enemyPos_y = []
 enemyImg = []
 for i in range(enemiesQuantity):
     enemyImg.append(pygame.image.load('enemy.png'))
-    enemyPos_x.append(random.randint(0, 730))
+    enemyPos_x.append(random.randint(40, 660))
     enemyPos_y.append(random.randint(10, 90))

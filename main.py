@@ -16,7 +16,7 @@ playerPos_x = config.playerPos_x
 playerPos_y = config.playerPos_y
 newPlayerPos_x, newPlayerPos_y = 0, 0
 # Inicializing bullet variables
-bulletPos_x, bulletPos_y = 0, playerPos_y
+bulletPos_x, bulletPos_y = 0, 0
 newBulletPos_x, newBulletPos_y = 0, config.bulletSpeed
 bulletState = 'ready'
 shooting_x = 0
@@ -82,7 +82,6 @@ def getBulletCollision(enemy_x, enemy_y, bullet_x, bullet_y):
     if distance < 30:
         collisionSound = mixer.Sound('explosion.wav')
         collisionSound.play()
-        enemySpeed += enemySpeed * 0.1
         return True
 
 
@@ -148,16 +147,13 @@ while running:
             game_over_flag = True
             break
 
-        # Movement
-        enemyPos_x[i] += newEnemyPos_x[i] * enemySpeed
-        if enemyPos_x[i] <= 10:
-            newEnemyPos_x[i] = -newEnemyPos_x[i] * enemySpeed
+        # Enemy Movement
+        if enemyPos_x[i] <= 5 or enemyPos_x[i] >= 730:
+            newEnemyPos_x[i] = -newEnemyPos_x[i]
             enemyPos_y[i] += 40
-        elif enemyPos_x[i] >= 730:
-            newEnemyPos_x[i] = -newEnemyPos_x[i] * enemySpeed
-            enemyPos_y[i] += 40
+        enemyPos_x[i] += newEnemyPos_x[i]
 
-        # Collision event
+        # Enemy Collision event
         if getBulletCollision(enemyPos_x[i], enemyPos_y[i], shooting_x, bulletPos_y):
             resetBullet()
             score_value += 1
