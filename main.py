@@ -97,7 +97,8 @@ def menu():
     while pause:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                running = False
+                return False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Unpause Button
