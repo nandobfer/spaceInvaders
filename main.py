@@ -4,6 +4,7 @@ import config
 
 game_over_flag = False
 pause = False
+running = False
 # Initializing player variables
 playerSpeed = config.playerSpeed
 playerPos_x = config.playerPos_x
@@ -91,7 +92,7 @@ def paused():
 
 
 def menu():
-    global pause
+    global pause, running
     pause = True
     while pause:
         for event in pygame.event.get():
@@ -111,7 +112,9 @@ def menu():
                     mixer.music.unpause()
                 # Quit Button
                 if config.quit_x <= mouse[0] <= config.quit_x + 200 and config.quit_y <= mouse[1] <= config.quit_y + 40:
-                    pygame.quit()
+                    running = False
+                    return False
+
 
         mouse = pygame.mouse.get_pos()
 
@@ -169,6 +172,7 @@ def restart():
 def main():
     global game_over_flag, playerSpeed, playerPos_x, playerPos_y, newPlayerPos_x, newPlayerPos_y, shooting_x, bulletPos_x, bulletPos_y, newBulletPos_x, newBulletPos_y, bulletState, score_value
     # Game loop
+    global running
     running = True
     while running:
         # RGB - Red, Green, Blue
