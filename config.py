@@ -10,4 +10,4 @@ playerSpeed = 0.2
 enemyPos_x = random.randint(0, 730)
 enemyPos_y = random.randint(30, 60)
 enemyImg = pygame.image.load('enemy.png')
-enemySpeed = 0.05
+enemySpeed = 0.15

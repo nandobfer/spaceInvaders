@@ -15,7 +15,7 @@ newPlayerPos_x, newPlayerPos_y = 0, 0
 enemySpeed = config.enemySpeed
 enemyPos_x = config.enemyPos_x
 enemyPos_y = config.enemyPos_y
-newEnemyPos_x, newEnemyPos_y = 0, 0
+newEnemyPos_x, newEnemyPos_y = enemySpeed, 0
 
 def enemyMove(enemy_x, enemy_y, player_x, player_y):
     if player_x - enemy_x > 0:
@@ -67,13 +67,13 @@ while running:
                 newPlayerPos_y = 0
 
     # Enemy movement events
-    newEnemyPos_x, newEnemyPos_y = enemyMove(enemyPos_x, enemyPos_y, playerPos_x, playerPos_y)
+    # newEnemyPos_x, newEnemyPos_y = enemyMove(enemyPos_x, enemyPos_y, playerPos_x, playerPos_y)
 
     # Setting new position
     playerPos_x += newPlayerPos_x
     playerPos_y += newPlayerPos_y
     enemyPos_x += newEnemyPos_x
-    enemyPos_y += newEnemyPos_y
+    # enemyPos_y += newEnemyPos_y
 
     # Setting boundaries
     if playerPos_x <= 10:
@@ -82,10 +82,12 @@ while running:
         playerPos_x = 730    
     if enemyPos_x <= 10:
         enemyPos_x = 10
-        # newEnemyPos_x = -newEnemyPos_x
+        newEnemyPos_x = -newEnemyPos_x
+        enemyPos_y += 40
     elif enemyPos_x >= 730:
         enemyPos_x = 730
-        # newEnemyPos_x = -newEnemyPos_x
+        newEnemyPos_x = -newEnemyPos_x
+        enemyPos_y += 40
 
     player(playerPos_x,playerPos_y)
     enemy(enemyPos_x,enemyPos_y)
