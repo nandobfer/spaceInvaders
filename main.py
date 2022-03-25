@@ -1,38 +1,34 @@
 import pygame, config, math, random
-from init import initializeGame, initializeScreen, initializePlayer
+from init import initializeGame, initializeScreen
 from pygame import mixer
 
 # Calling initializing functions
 initializeGame()
 game_over_flag = False
-initializePlayer()
 screen = initializeScreen()
-# Background sound
+
+# Music
 mixer.music.load('background.wav')
 mixer.music.play(-1)
+
 # Initializing player variables
 playerSpeed = config.playerSpeed
 playerPos_x = config.playerPos_x
 playerPos_y = config.playerPos_y
 newPlayerPos_x, newPlayerPos_y = 0, 0
+
 # Inicializing bullet variables
-bulletPos_x, bulletPos_y = 0, 0
-newBulletPos_x, newBulletPos_y = 0, config.bulletSpeed
+shooting_x, bulletPos_x, bulletPos_y, newBulletPos_x, newBulletPos_y = 0, 0, 0, 0, config.bulletSpeed
 bulletState = 'ready'
-shooting_x = 0
+
 # Initializing enemy variables
 enemySpeed = 1
-enemyPos_x = []
-enemyPos_y = []
-newEnemyPos_x = []
-newEnemyPos_y = []
-for i in range(config.enemiesQuantity):
-    enemyPos_x.append(config.enemyPos_x[i])
-    enemyPos_y.append(config.enemyPos_y[i])
-    newEnemyPos_x.append(config.enemySpeed)
-    newEnemyPos_y.append(0)
+enemyPos_x = config.enemyPos_x
+enemyPos_y = config.enemyPos_y
+newEnemyPos_x = config.enemyNewPos_x
+newEnemyPos_y = config.enemyPos_y
 
-# Score
+# Score Text
 score_value = 0
 font = pygame.font.Font('freesansbold.ttf', 32)
 text_x = 10
@@ -40,6 +36,9 @@ text_y = 10
 
 # Game Over
 over_font = pygame.font.Font('freesansbold.ttf', 64)
+
+# Speed Text
+speed_font = pygame.font.Font('freesansbold.ttf', 32)
 
 
 def game_over_text():
@@ -52,6 +51,11 @@ def game_over_text():
 def showScore(x, y):
     score = font.render("Score: " + str(score_value), True, (255, 255, 255))
     screen.blit(score, (x, y))
+
+
+def showSpeed(x, y):
+    speedText = speed_font.render("Speed " + str(round(enemySpeed, 1)), True, (255, 255, 255))
+    screen.blit(speedText, (x, y))
 
 
 def player(x, y):
@@ -180,4 +184,5 @@ while running:
         mixer.music.stop()
     else:
         showScore(text_x, text_y)
+        showSpeed(650 - text_x, text_y)
     pygame.display.update()

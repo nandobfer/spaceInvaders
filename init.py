@@ -14,9 +14,4 @@ def initializeScreen():
     screen = pygame.display.set_mode((800,600))
     return screen
 
-def initializePlayer():
-    # Player
-
-    # return playerImg, start_x, start_y
-    return True
 
