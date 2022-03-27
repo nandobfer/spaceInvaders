@@ -1,10 +1,11 @@
-import pygame, math, random, init, sys
+import pygame, math, random, init
 from pygame import mixer
 import config
 
 game_over_flag = False
 pause = False
 running = False
+start_menu = True
 # Initializing player variables
 playerSpeed = config.playerSpeed
 playerPos_x = config.playerPos_x
@@ -29,8 +30,8 @@ score_value = 0
 def game_over_text():
     game_over_text = config.game_over_font.render("GAME OVER", True, (255, 255, 255))
     game_over_score = config.game_over_font.render("Score: " + str(score_value), True, (0, 255, 0))
-    init.screen.blit(game_over_text, (0.25 * init.resolution[0], 0.4 * init.resolution[1]))
-    init.screen.blit(game_over_score, (0.305 * init.resolution[0], 0.5 * init.resolution[1]))
+    init.screen.blit(game_over_text, (0.28 * init.resolution[0], 0.35 * init.resolution[1]))
+    init.screen.blit(game_over_score, (0.35 * init.resolution[0], 0.45 * init.resolution[1]))
 
 
 def showScore(x, y):
@@ -92,7 +93,7 @@ def paused():
 
 
 def menu():
-    global pause, running
+    global pause, running, start_menu
     pause = True
     while pause:
         for event in pygame.event.get():
@@ -114,8 +115,8 @@ def menu():
                 # Quit Button
                 if config.quit_x <= mouse[0] <= config.quit_x + 200 and config.quit_y <= mouse[1] <= config.quit_y + 40:
                     running = False
+                    start_menu = False
                     return False
-
 
         mouse = pygame.mouse.get_pos()
 
@@ -125,6 +126,7 @@ def menu():
             pygame.draw.rect(init.screen, (170, 170, 170), [config.unpause_x, config.unpause_y, 200, 40])
         else:
             pygame.draw.rect(init.screen, (100, 100, 100), [config.unpause_x, config.unpause_y, 200, 40])
+        # Unpause Button Text
         init.screen.blit(config.buttonUnpause, (config.unpause_x + 15, config.unpause_y))
 
         # Restart Button Rect
@@ -133,6 +135,7 @@ def menu():
             pygame.draw.rect(init.screen, (170, 170, 170), [config.restart_x, config.restart_y, 200, 40])
         else:
             pygame.draw.rect(init.screen, (100, 100, 100), [config.restart_x, config.restart_y, 200, 40])
+        # Restart Button Text
         init.screen.blit(config.buttonRestart, (config.restart_x + 15, config.restart_y))
 
         # Quit Button Rect
@@ -141,6 +144,7 @@ def menu():
             pygame.draw.rect(init.screen, (170, 170, 170), [config.quit_x, config.quit_y, 200, 40])
         else:
             pygame.draw.rect(init.screen, (100, 100, 100), [config.quit_x, config.quit_y, 200, 40])
+        # Quit Button Text
         init.screen.blit(config.buttonQuit, (config.quit_x + 55, config.quit_y))
 
         pygame.display.update()
@@ -167,17 +171,21 @@ def restart():
     newEnemyPos_x = config.enemyNewPos_x[:]
     newEnemyPos_y = config.enemyPos_y[:]
     score_value = 0
-    main()
+    game()
 
 
-def main():
+def game():
     global game_over_flag, playerSpeed, playerPos_x, playerPos_y, newPlayerPos_x, newPlayerPos_y, shooting_x, bulletPos_x, bulletPos_y, newBulletPos_x, newBulletPos_y, bulletState, score_value
+    # Music
+    mixer.music.load('background.wav')
+    mixer.music.play(-1)
+    mixer.music.set_volume(mixer.music.get_volume() / 4)
     # Game loop
     global running
     running = True
     while running:
         # RGB - Red, Green, Blue
-        init.screen.fill((0, 0, 255))
+        # init.screen.fill((0, 0, 255))
         # Background
         init.screen.blit(config.background, (0, 0))
 
@@ -268,20 +276,115 @@ def main():
         if game_over_flag:
             game_over_text()
             mixer.music.stop()
-            menu()
+            startMenu()
         else:
             showScore(config.score_x, config.score_y)
             showSpeed(0.8125 * init.resolution[0] - config.score_x, config.score_y)
 
         # Buttons
         mouse = pygame.mouse.get_pos()
+        # Pause Button Rect
         if config.pause_x <= mouse[0] <= config.pause_x + 140 and config.pause_y <= mouse[1] <= config.pause_y + 40:
             pygame.draw.rect(init.screen, (170, 170, 170), [config.pause_x, config.pause_y, 140, 40])
         else:
             pygame.draw.rect(init.screen, (100, 100, 100), [config.pause_x, config.pause_y, 140, 40])
+        # Pause Button Text
         init.screen.blit(config.buttonPause, (config.pause_x + 12.5, config.pause_y))
 
         pygame.display.update()
 
+    return True
 
-main()
+
+def startMenu():
+    global start_menu, running
+    config.enemiesQuantity = 10
+    difficulty_text = ''
+    difficulty_active = False
+    screen_alphaed = pygame.Surface(init.resolution)
+    screen_alphaed.set_alpha(235)
+    screen_alphaed.fill((40, 40, 40))
+    while start_menu:
+        init.screen.blit(config.background, (0, 0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                start_menu = False
+                running = False
+                return False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # Difficulty chooser, if clicked, activate chooser
+                if config.unpause_x <= mouse[0] <= config.unpause_x + 200 and config.unpause_y <= mouse[
+                    1] <= config.unpause_y + 40:
+                    difficulty_active = True
+                else:
+                    difficulty_active = False
+                # Start Button
+                if config.restart_x <= mouse[0] <= config.restart_x + 200 and config.restart_y <= mouse[
+                    1] <= config.restart_y + 40:
+                    if game_over_flag:
+                        restart()
+                    else:
+                        game()
+                    start_menu = False
+                # Quit Button
+                if config.quit_x <= mouse[0] <= config.quit_x + 200 and config.quit_y <= mouse[1] <= config.quit_y + 40:
+                    start_menu = False
+                    running = False
+                    return False
+
+            # Input Check
+            if event.type == pygame.KEYDOWN and difficulty_active:
+                if event.key == pygame.K_RETURN:
+                    if difficulty_text:
+                        config.enemiesQuantity = int(difficulty_text)
+                    difficulty_active = False
+                elif event.key == pygame.K_BACKSPACE:
+                    difficulty_text = difficulty_text[:-1]
+                else:
+                    difficulty_text += event.unicode
+
+        mouse = pygame.mouse.get_pos()
+
+        # Game Over Screen
+        if game_over_flag:
+            game_over_text()
+
+        # Start Button Rect
+        if config.restart_x <= mouse[0] <= config.restart_x + 200 and config.restart_y <= mouse[
+            1] <= config.restart_y + 40:
+            pygame.draw.rect(init.screen, (170, 170, 170), [config.restart_x, config.restart_y, 200, 40])
+        else:
+            pygame.draw.rect(init.screen, (100, 100, 100), [config.restart_x, config.restart_y, 200, 40])
+        # Start Button Text
+        init.screen.blit(config.buttonStart, (config.restart_x + 50, config.restart_y))
+
+        # Quit Button Rect
+        if config.quit_x <= mouse[0] <= config.quit_x + 200 and config.quit_y <= mouse[
+            1] <= config.quit_y + 40:
+            pygame.draw.rect(init.screen, (170, 170, 170), [config.quit_x, config.quit_y, 200, 40])
+        else:
+            pygame.draw.rect(init.screen, (100, 100, 100), [config.quit_x, config.quit_y, 200, 40])
+        # Quit Button Text
+        init.screen.blit(config.buttonQuit, (config.quit_x + 55, config.quit_y))
+
+        # Difficulty Chooser Rect
+        if config.unpause_x <= mouse[0] <= config.unpause_x + 200 and config.unpause_y <= mouse[
+            1] <= config.unpause_y + 40 or difficulty_active:
+            if difficulty_active:
+                # Black Transparent Screen
+                init.screen.blit(screen_alphaed, (0, 0))
+            pygame.draw.rect(init.screen, (170, 170, 170), [config.unpause_x, config.unpause_y, 200, 40])
+        else:
+            pygame.draw.rect(init.screen, (100, 100, 100), [config.unpause_x, config.unpause_y, 200, 40])
+
+        # Difficulty Chooser Text
+        init.screen.blit(config.enemiesButton, (config.difficulty_text_x + 85, config.difficulty_text_y))
+        # Difficult Chosen Text
+        difficulty_text_show = config.text.render(difficulty_text, True, (255, 255, 255))
+        init.screen.blit(difficulty_text_show, (config.unpause_x + 85, config.unpause_y))
+
+        pygame.display.update()
+
+
+startMenu()

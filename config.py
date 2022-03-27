@@ -16,7 +16,7 @@ bulletImg = pygame.image.load('bullet.png').convert_alpha()
 bulletSpeed = 1
 
 # Enemy starting variables
-enemiesQuantity = 10
+enemiesQuantity = 100
 enemySpeed = 0.15
 enemyHitbox = 30
 enemyPos_x = []
@@ -49,6 +49,8 @@ pause_x = 40 + 0.38 * init.resolution[0]
 pause_y = 10
 unpause_x = 0.4 * init.resolution[0]
 unpause_y = 10 + init.screen.get_height() * 3 / 5
+difficulty_text_x = 0.34 * init.resolution[0]
+difficulty_text_y = 10 + init.screen.get_height() * 2.69 / 5
 restart_x = 0.4 * init.resolution[0]
 restart_y = 10 + init.screen.get_height() * 3.5 / 5
 quit_x = 0.4 * init.resolution[0]
@@ -57,3 +59,5 @@ buttonQuit = text.render("Quit", True, (255, 255, 255))
 buttonPause = text.render("Pause", True, (255, 255, 255))
 buttonUnpause = text.render("Unpause", True, (255, 255, 255))
 buttonRestart = text.render("Restart", True, (255, 255, 255))
+buttonStart = text.render("Play", True, (255, 255, 255))
+enemiesButton = text.render("Enemies", True, (255, 255, 255))

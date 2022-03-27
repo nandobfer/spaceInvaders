@@ -24,8 +24,4 @@ def initializeScreen():
 # Calling initializing functions
 initializeGame()
 screen = initializeScreen()
-# Music
-mixer.music.load('background.wav')
-mixer.music.play(-1)
-mixer.music.set_volume(mixer.music.get_volume() / 4)
 
